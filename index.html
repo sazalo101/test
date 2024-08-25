@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Resume</title>
+</head>
+<body>
+  <h1>Upload Resume</h1>
+  <form action="http://localhost:5000/upload" method="post" enctype="multipart/form-data">
+    <label for="resume">Resume:</label>
+    <input type="file" id="resume" name="resume" required>
+    <br><br>
+    <label for="jobDescription">Job Description:</label>
+    <textarea id="jobDescription" name="jobDescription" rows="4" cols="50" required></textarea>
+    <br><br>
+    <button type="submit">Upload</button>
+  </form>
+</body>
+</html>

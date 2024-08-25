@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Analyzer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    textarea {
+      padding: 10px;
+      font-size: 16px;
+      resize: vertical;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f0f0f0;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Resume Analyzer</h1>
+    <form id="resume-form">
+      <label for="resume-file">Upload your resume:</label>
+      <input type="file" id="resume-file" name="resume-file" required>
+      <label for="job-description">Job Description:</label>
+      <textarea id="job-description" name="job-description" rows="5" required></textarea>
+      <button type="submit">Analyze</button>
+    </form>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('resume-form');
+    const resultDiv = document.getElementById('result');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const resumeFile = document.getElementById('resume-file').files[0];
+      const jobDescription = document.getElementById('job-description').value;
+
+      const formData = new FormData();
+      formData.append('resume', resumeFile);
+      formData.append('jobDescription', jobDescription);
+
+      try {
+        const response = await fetch('http://localhost:5000/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          resultDiv.textContent = data.choices[0].message.content;
+        } else {
+          resultDiv.textContent = 'Error: ' + response.status + ' - ' + response.statusText;
+        }
+      } catch (error) {
+        resultDiv.textContent = 'Error: ' + error.message;
+      }
+    });
+  </script>
+</body>
+</html>
