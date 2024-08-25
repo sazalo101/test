@@ -11,12 +11,6 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Ensure uploads folder exists
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);
-}
-
 // Initialize OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
@@ -27,13 +21,22 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // Configure multer for file uploads
-const upload = multer({ dest: uploadsDir });
+const upload = multer({
+  dest: 'uploads/',
+  fileFilter: (req, file, cb) => {
+    const dir = './uploads';
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, true);
+  }
+});
 
 // Route to handle file upload
 app.post('/upload', upload.single('resume'), async (req, res) => {
   try {
     const jobDescription = req.body.jobDescription;
-    const filePath = path.join(__dirname, req.file.path);
+    const filePath = req.file.path;
 
     // Extract text from the uploaded PDF resume
     const resumeText = await extractTextFromPDF(filePath);
