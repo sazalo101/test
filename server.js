@@ -8,7 +8,7 @@ const pdf = require('pdf-parse');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
-// Load environment variables
+// Load environment variables from .env file
 dotenv.config();
 
 // Initialize OpenAI client
@@ -18,7 +18,7 @@ const openai = new OpenAI({
 
 // Initialize Express app
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5000; // Use port provided by Render or default to 5000
 
 // Middleware
 app.use(bodyParser.json());
@@ -34,7 +34,7 @@ if (!fs.existsSync(uploadsDir)) {
 // Configure multer for file uploads
 const upload = multer({ dest: 'uploads/' });
 
-// Route to handle file upload and job description
+// Route to handle file upload and job description analysis
 app.post('/upload', upload.single('resume'), async (req, res) => {
   try {
     const resumePath = req.file.path;
@@ -59,6 +59,7 @@ app.post('/upload', upload.single('resume'), async (req, res) => {
     // Extract match information and percentage
     const matchResult = response.choices[0].message.content;
 
+    // Send back the match result
     res.json({ matchResult });
   } catch (error) {
     console.error('Error processing file:', error.message);
